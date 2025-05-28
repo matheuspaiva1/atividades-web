@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Questão 3 - Prova</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin-top: 50px;
+        }
+
+        img {
+            width: 200px;
+            height: 200px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .btn-back{
+            border-radius: 8px;
+            border: 1px solid #e2e2e2;
+            background-color: #f64040;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .btn-add {
+            border-radius: 8px;
+            border: 1px solid #ffffff;
+            background-color: #409bf6;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .btn-back:hover{
+            background-color: #e10202;
+        }
+
+        .btn-add:hover {
+            background-color: #036bd3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <img 
+        id="pokemon"
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg"
+        alt="Pokémon"
+    >
+
+    <div>
+        <button onclick="changePokemon(-1)" class="btn-back" id="btn-back">Voltar -1</button>
+        <button onclick="changePokemon(1)" class="btn-add" id="btn-add">Adiantar +1</button>
+    </div>
+
+    <script>
+        let btnAdd = document.getElementById("btn-add")
+        let btnBack = document.getElementById("btn-back")
+
+        let current = 1;
+
+        function changePokemon(pokemon) {
+            current += pokemon;
+
+            if (current < 1) {
+                current = 1;
+                btnBack.style.cursor = "auto"
+                btnBack.style.background = "#e10202"
+            } else if (current > 1) {
+                    btnBack.style.cursor = "pointer"
+                    btnBack.style.background = "#f64040"
+            }
+            if (current > 100) {
+                current = 100
+            };
+
+            const img = document.getElementById('pokemon');
+
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${current}.svg`;
+        }
+    </script>
+
+</body>
+
+</html>
