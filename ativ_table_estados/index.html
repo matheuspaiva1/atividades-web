@@ -33,7 +33,6 @@
 </head>
 
 <body>
-    <h1>COVID-19 - Estados do Brasil</h1>
     <table id="tabela-estados">
         <thead>
             <tr>
@@ -48,9 +47,9 @@
         <tfoot>
             <tr>
                 <th colspan="2">Médias</th>
-                <td id="media-casos"></td>
-                <td id="media-suspeitos"></td>
-                <td id="media-obitos"></td>
+                <td id="mediaCases"></td>
+                <td id="mediaSuspects"></td>
+                <td id="mediaObits"></td>
             </tr>
             <tr>
                 <th colspan="5" id="maior-relacao"></th>
@@ -65,45 +64,45 @@
         async function carregarDados() {
             const response = await fetch("https://covid19-brazil-api.now.sh/api/report/v1");
             const data = await response.json();
-            const estados = data.data;
+            const table = data.data;
 
             const corpoTabela = document.querySelector("#tabela-estados tbody");
             let somaCasos = 0, somaSuspeitos = 0, somaMortes = 0;
             let maiorRelacao = { uf: "", valor: 0 };
             let menorRelacao = { uf: "", valor: Infinity };
 
-            estados.forEach((estado) => {
-                somaCasos += estado.cases;
-                somaSuspeitos += estado.suspects;
-                somaMortes += estado.deaths;
+            table.forEach((coluna) => {
+                somaCasos += coluna.cases;
+                somaSuspeitos += coluna.suspects;
+                somaMortes += coluna.deaths;
 
-                const relacao = estado.deaths > 0 ? estado.cases / estado.deaths : 0;
-                if (relacao > maiorRelacao.valor) {
-                    maiorRelacao = { uf: estado.state, valor: relacao };
+                const calculo = coluna.deaths > 0 ? coluna.cases / coluna.deaths : 0;
+                if (calculo > maiorRelacao.valor) {
+                    maiorRelacao = { uf: coluna.state, valor: calculo };
                 }
-                if (relacao < menorRelacao.valor && estado.deaths > 0) {
-                    menorRelacao = { uf: estado.state, valor: relacao };
+                if (calculo < menorRelacao.valor && coluna.deaths > 0) {
+                    menorRelacao = { uf: coluna.state, valor: calculo };
                 }
 
                 const row = document.createElement("tr");
                 row.innerHTML = `
-          <td>${estado.state}</td>
-          <td>${estado.uf}</td>
-          <td>${estado.cases}</td>
-          <td>${estado.suspects}</td>
-          <td>${estado.deaths}</td>
+          <td>${coluna.state}</td>
+          <td>${coluna.uf}</td>
+          <td>${coluna.cases}</td>
+          <td>${coluna.suspects}</td>
+          <td>${coluna.deaths}</td>
         `;
                 corpoTabela.appendChild(row);
             });
 
-            const total = estados.length;
+            const total = table.length;
             const mediaCasos = somaCasos / total;
             const mediaSuspeitos = somaSuspeitos / total;
             const mediaMortes = somaMortes / total;
 
-            document.getElementById("media-casos").textContent = mediaCasos.toFixed(2);
-            document.getElementById("media-suspeitos").textContent = mediaSuspeitos.toFixed(2);
-            document.getElementById("media-obitos").textContent = mediaMortes.toFixed(2);
+            document.getElementById("mediaCases").textContent = mediaCasos.toFixed(2);
+            document.getElementById("mediaSuspects").textContent = mediaSuspeitos.toFixed(2);
+            document.getElementById("mediaObits").textContent = mediaMortes.toFixed(2);
 
             Array.from(corpoTabela.rows).forEach(row => {
                 const mortes = parseInt(row.cells[4].textContent);
