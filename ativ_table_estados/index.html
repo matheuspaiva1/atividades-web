@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>COVID-19 - Estados do Brasil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #000000;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #d8fffc;
+        }
+
+        .media {
+            background-color: #89ff80;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>COVID-19 - Estados do Brasil</h1>
+    <table id="tabela-estados">
+        <thead>
+            <tr>
+                <th>Estado</th>
+                <th>UF</th>
+                <th>Casos</th>
+                <th>Suspeitos</th>
+                <th>Mortes</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <th colspan="2">Médias</th>
+                <td id="media-casos"></td>
+                <td id="media-suspeitos"></td>
+                <td id="media-obitos"></td>
+            </tr>
+            <tr>
+                <th colspan="5" id="maior-relacao"></th>
+            </tr>
+            <tr>
+                <th colspan="5" id="menor-relacao"></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        async function carregarDados() {
+            const response = await fetch("https://covid19-brazil-api.now.sh/api/report/v1");
+            const data = await response.json();
+            const estados = data.data;
+
+            const corpoTabela = document.querySelector("#tabela-estados tbody");
+            let somaCasos = 0, somaSuspeitos = 0, somaMortes = 0;
+            let maiorRelacao = { uf: "", valor: 0 };
+            let menorRelacao = { uf: "", valor: Infinity };
+
+            estados.forEach((estado) => {
+                somaCasos += estado.cases;
+                somaSuspeitos += estado.suspects;
+                somaMortes += estado.deaths;
+
+                const relacao = estado.deaths > 0 ? estado.cases / estado.deaths : 0;
+                if (relacao > maiorRelacao.valor) {
+                    maiorRelacao = { uf: estado.state, valor: relacao };
+                }
+                if (relacao < menorRelacao.valor && estado.deaths > 0) {
+                    menorRelacao = { uf: estado.state, valor: relacao };
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td>${estado.state}</td>
+          <td>${estado.uf}</td>
+          <td>${estado.cases}</td>
+          <td>${estado.suspects}</td>
+          <td>${estado.deaths}</td>
+        `;
+                corpoTabela.appendChild(row);
+            });
+
+            const total = estados.length;
+            const mediaCasos = somaCasos / total;
+            const mediaSuspeitos = somaSuspeitos / total;
+            const mediaMortes = somaMortes / total;
+
+            document.getElementById("media-casos").textContent = mediaCasos.toFixed(2);
+            document.getElementById("media-suspeitos").textContent = mediaSuspeitos.toFixed(2);
+            document.getElementById("media-obitos").textContent = mediaMortes.toFixed(2);
+
+            // Destacar linhas com mortes acima da média
+            Array.from(corpoTabela.rows).forEach(row => {
+                const mortes = parseInt(row.cells[4].textContent);
+                if (mortes > mediaMortes) {
+                    row.classList.add("media");
+                }
+            });
+
+            document.getElementById("maior-relacao").textContent =
+                `Maior relação Casos/Óbitos: ${maiorRelacao.uf} (${maiorRelacao.valor.toFixed(2)})`;
+            document.getElementById("menor-relacao").textContent =
+                `Menor relação Casos/Óbitos: ${menorRelacao.uf} (${menorRelacao.valor.toFixed(2)})`;
+        }
+
+        carregarDados();
+    </script>
+</body>
+
+</html>

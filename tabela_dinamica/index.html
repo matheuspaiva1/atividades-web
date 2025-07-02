@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listagem de Alunos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    
+    h1 {
+      color: #502c2c;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .alunos-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    th {
+      background-color: #db3434;
+      color: white;
+    }
+    
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Alunos</h1>
+    
+    <div id="table">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Curso</th>
+            <th>Matricula</th>
+          </tr>
+        </thead>
+        <tbody id="body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="server.js">
+    
+  </script>
+</body>
+</html>
