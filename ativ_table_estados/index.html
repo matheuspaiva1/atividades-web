@@ -105,7 +105,6 @@
             document.getElementById("media-suspeitos").textContent = mediaSuspeitos.toFixed(2);
             document.getElementById("media-obitos").textContent = mediaMortes.toFixed(2);
 
-            // Destacar linhas com mortes acima da média
             Array.from(corpoTabela.rows).forEach(row => {
                 const mortes = parseInt(row.cells[4].textContent);
                 if (mortes > mediaMortes) {
