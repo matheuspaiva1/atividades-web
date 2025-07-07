@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Memória Pokémon</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      background-color: #ff5d5d;
+      border: 2px solid #666;
+      cursor: pointer;
+      background-size: cover;
+      background-position: center;
+      border-radius: 32px;
+    }
+
+    .hidden {
+      background-image: url('https://via.placeholder.com/100?text=?');
+    }
+
+    .revealed {
+      border: 2px solid green;
+    }
+
+    p {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jogo da Memória Pokémon</h1>
+  <div class="grid" id="gameGrid"></div>
+  <p>PTS: <span id="pontos">0</span></p>
+
+  <script>
+    const imagens = [
+      "./images/pikachu.jpg", 
+      "./images/bubasaur.jpg", 
+      "./images/charmander.jpg", 
+      "./images/mewtwo.png", 
+      "./images/psyduck.png", 
+      "./images/psyduck.png", 
+      "./images/planta.jpg",
+      "./images/dragonite.jpg"
+    ];
+
+    let cartas = imagens.concat(imagens) // duplicar
+      .sort(() => Math.random() - 0.5)   // embaralhar
+      .map((img, index) => ({ id: index, img, revelada: false }));
+
+    const grid = document.getElementById("gameGrid");
+    let escolhidas = [];
+    let pontos = 0;
+
+    function renderizar() {
+      grid.innerHTML = "";
+      cartas.forEach(carta => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.classList.add(carta.revelada ? "revealed" : "hidden");
+        div.style.backgroundImage = carta.revelada ? `url('${carta.img}')` : "";
+        div.onclick = () => escolher(carta.id);
+        grid.appendChild(div);
+      });
+    }
+
+    function escolher(id) {
+      const carta = cartas.find(c => c.id === id);
+      if (carta.revelada || escolhidas.length === 2) return;
+
+      carta.revelada = true;
+      escolhidas.push(carta);
+      renderizar();
+
+      if (escolhidas.length === 2) {
+        setTimeout(() => {
+          if (escolhidas[0].img === escolhidas[1].img) {
+            pontos++;
+            document.getElementById("pontos").textContent = pontos;
+          } else {
+            escolhidas[0].revelada = false;
+            escolhidas[1].revelada = false;
+          }
+          escolhidas = [];
+          renderizar();
+        }, 1000);
+      }
+    }
+
+    renderizar();
+  </script>
+</body>
+</html>

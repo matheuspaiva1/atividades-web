@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Produtos - Promise</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    .acima-media {
+      background-color: #d1ffd1;
+    }
+
+    .mais-caro {
+      background-color: #ffdddd;
+    }
+
+    .mais-barato {
+      background-color: #ddddff;
+    }
+
+    .erro {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lista de Produtos</h1>
+  <div id="content"></div>
+
+  <script>
+    // Criação da Promise
+    function getProdutos() {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const numero = Math.floor(Math.random() * 100);
+          if (numero % 2 === 0) {
+            // Lista com pelo menos 10 produtos
+            const produtos = [
+              { id: 1, nome: "Notebook", tipo: "Eletrônico", preco: 3500 },
+              { id: 2, nome: "Teclado", tipo: "Periférico", preco: 120 },
+              { id: 3, nome: "Mouse", tipo: "Periférico", preco: 60 },
+              { id: 4, nome: "Cadeira Gamer", tipo: "Móvel", preco: 1500 },
+              { id: 5, nome: "Monitor", tipo: "Eletrônico", preco: 800 },
+              { id: 6, nome: "Celular", tipo: "Eletrônico", preco: 2500 },
+              { id: 7, nome: "Tablet", tipo: "Eletrônico", preco: 1600 },
+              { id: 8, nome: "Fone de Ouvido", tipo: "Acessório", preco: 200 },
+              { id: 9, nome: "Webcam", tipo: "Acessório", preco: 300 },
+              { id: 10, nome: "HD Externo", tipo: "Armazenamento", preco: 400 },
+            ];
+            resolve(produtos);
+          } else {
+            reject({ RES: "ERROR", MSG: "ERRO NO SISTEMA" });
+          }
+        }, 4000);
+      });
+    }
+
+    // Função para consumir a promise
+    async function fetchProdutos() {
+      const div = document.getElementById("content");
+      div.innerHTML = "<p>Carregando produtos...</p>";
+
+      try {
+        const listaProdutos = await getProdutos();
+
+        const precos = listaProdutos.map(p => p.preco);
+        const media = precos.reduce((a, b) => a + b) / precos.length;
+        const max = Math.max(...precos);
+        const min = Math.min(...precos);
+
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Preço</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        listaProdutos.forEach(l => {
+          let classe = "";
+          if (l.preco > media) classe += "acima-media ";
+          if (l.preco === max) classe += "mais-caro ";
+          if (l.preco === min) classe += "mais-barato ";
+          html += `
+            <tr class="${classe}">
+              <td>${l.id}</td>
+              <td>${l.nome}</td>
+              <td>${l.tipo}</td>
+              <td>R$ ${l.preco.toFixed(2)}</td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table>`;
+        html += `<p><strong>Média de preços:</strong> R$ ${media.toFixed(2)}</p>`;
+        html += `<p><strong>Mais caro:</strong> R$ ${max.toFixed(2)}</p>`;
+        html += `<p><strong>Mais barato:</strong> R$ ${min.toFixed(2)}</p>`;
+
+        div.innerHTML = html;
+      } catch (err) {
+        div.innerHTML = `<p class="erro">${err.MSG}</p>`;
+      }
+    }
+
+    fetchProdutos();
+  </script>
+</body>
+</html>
